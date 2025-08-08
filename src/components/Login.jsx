@@ -6,10 +6,12 @@ const Login = ({ setIsAuthenticated, setUser }) => {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
     
     try {
       const response = await api.post('/auth/login', credentials);
@@ -20,7 +22,7 @@ const Login = ({ setIsAuthenticated, setUser }) => {
       setUser(response.data.user);
       setIsAuthenticated(true);
     } catch (error) {
-      alert('Login failed. Use demo/demo123');
+      setError('Login failed. Please try demo/demo123');
     } finally {
       setLoading(false);
     }
@@ -28,33 +30,57 @@ const Login = ({ setIsAuthenticated, setUser }) => {
 
   return (
     <div className="login-container">
+      <div className="login-background">
+        <div className="floating-shapes">
+          <div className="shape shape-1"></div>
+          <div className="shape shape-2"></div>
+          <div className="shape shape-3"></div>
+        </div>
+      </div>
+      
       <div className="login-card">
         <div className="login-header">
-          <h2 className="login-title">AI Playground</h2>
-          <p className="login-subtitle">Sign in to your account</p>
+          <div className="logo">
+            <div className="logo-icon">🚀</div>
+          </div>
+          <h2 className="login-title">Welcome Back</h2>
+          <p className="login-subtitle">Sign in to continue to AI Playground</p>
         </div>
+
         <form className="login-form" onSubmit={handleLogin}>
+          {error && (
+            <div className="error-message">
+              <span className="error-icon">⚠️</span>
+              {error}
+            </div>
+          )}
+
           <div className="form-group">
             <label htmlFor="username" className="form-label">Username</label>
-            <input
-              id="username"
-              type="text"
-              required
-              className="input"
-              placeholder="Enter username (demo)"
-              value={credentials.username}
-              onChange={(e) => setCredentials({...credentials, username: e.target.value})}
-            />
+            <div className="input-wrapper">
+              <span className="input-icon">👤</span>
+              <input
+                id="username"
+                type="text"
+                required
+                className="input"
+                placeholder="Enter your username"
+                value={credentials.username}
+                onChange={(e) => setCredentials({...credentials, username: e.target.value})}
+              />
+            </div>
           </div>
+
           <div className="form-group">
             <label htmlFor="password" className="form-label">Password</label>
-            <div className="password-group">
+            <div className="input-wrapper">
+              <span className="input-icon">🔒</span>
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 required
                 className="input"
-                placeholder="Enter password (demo123)"
+                placeholder="Enter your password"
                 value={credentials.password}
                 onChange={(e) => setCredentials({...credentials, password: e.target.value})}
               />
@@ -67,13 +93,19 @@ const Login = ({ setIsAuthenticated, setUser }) => {
               </button>
             </div>
           </div>
+
+          <div className="demo-hint">
+            <span className="hint-icon">💡</span>
+            Try: <strong>demo</strong> / <strong>demo123</strong>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
-            className="login-button"
+            className={`login-button ${loading ? 'loading' : ''}`}
           >
-            {loading && <span className="loading-spinner"></span>}
-            {loading ? 'Signing in...' : 'Sign in'}
+            {loading && <div className="loading-spinner"></div>}
+            <span>{loading ? 'Signing in...' : 'Sign In'}</span>
           </button>
         </form>
       </div>
